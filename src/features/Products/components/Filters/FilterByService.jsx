@@ -1,0 +1,67 @@
+import { Box, Checkbox, FormControlLabel, makeStyles, Typography } from '@material-ui/core';
+import { LanguageContext } from 'context/LanguageContext';
+import PropTypes from 'prop-types';
+import React, { useContext } from 'react';
+
+FilterByService.propTypes = {
+    filters: PropTypes.object.isRequired, //để biết dc checkbox nào dang check
+    onChange: PropTypes.func,
+};
+
+const useStyles = makeStyles(theme => ({
+    root: {
+        padding: theme.spacing(2),
+        borderTop: `1px solid ${theme.palette.grey[300]}`,
+    },
+    list: {
+        margin: 0,
+        padding: 0,
+        listStyleType: 'none',
+
+        '& > li': {
+            margin: 0,
+
+        }
+    }
+}))
+
+function FilterByService({ filters, onChange = null }) {
+    const { defaultLanguage } = useContext(LanguageContext);
+    const classes = useStyles();
+
+    const handleChange = (e) => {
+        if (!onChange) return;
+
+        const { name, checked } = e.target;
+        onChange({ [name]: checked });
+    }
+
+    return (
+        <Box className={classes.root}>
+            <Typography variant="subtitle2">{defaultLanguage.Service}</Typography>
+
+            <ul className={classes.list}>
+                {
+                    [{ value: 'isPromotion', label: `${defaultLanguage.There_are_promotions}` },
+                    { value: 'isFreeShip', label: `${defaultLanguage.Free_shipping}` }].map((service) => (
+                        <li key={service.value}>
+                            <FormControlLabel
+                                control={
+                                    <Checkbox
+                                        checked={Boolean(filters[service.value])}
+                                        onChange={handleChange}
+                                        name={service.value}
+                                        color="primary"
+                                    />
+                                }
+                                label={service.label}
+                            />
+                        </li>
+                    ))
+                }
+            </ul>
+        </Box >
+    );
+}
+
+export default FilterByService;
